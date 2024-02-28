@@ -1,0 +1,38 @@
+import random
+import nltk
+from nltk.tokenize import word_tokenize
+
+def generate_bigram_model(text):
+    words = word_tokenize(text)
+    bigrams = [(words[i], words[i+1]) for i in range(len(words)-1)]
+    model = {}
+    for w1, w2 in bigrams:
+        if w1 not in model:
+            model[w1] = []
+        model[w1].append(w2)
+    return model
+
+def generate_text(model, length=10):
+    current_word = random.choice(list(model.keys()))
+    text = [current_word]
+    for _ in range(length-1):
+        if current_word in model:
+            next_word = random.choice(model[current_word])
+            text.append(next_word)
+            current_word = next_word
+        else:
+            break
+    return ' '.join(text)
+
+def main():
+    text = "I love programming because it is fun and challenging. Programming helps me solve problems and create new things."
+    model = generate_bigram_model(text)
+    generated_text = generate_text(model, length=20)
+
+    print("Generated Text:")
+    print(generated_text)
+
+if __name__ == "__main__":
+    nltk.download('punkt')
+  
+    main()

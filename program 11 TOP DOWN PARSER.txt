@@ -1,0 +1,51 @@
+class CFG:
+    def __init__(self, start_symbol, productions):
+        self.start_symbol = start_symbol
+        self.productions = productions
+
+    def parse(self, input_string):
+        self.input_string = input_string
+        self.index = 0
+
+        if self.parse_nonterminal(self.start_symbol):
+            if self.index == len(input_string):  
+                return True
+        return False
+
+    def parse_nonterminal(self, nonterminal):
+        if self.index >= len(self.input_string):
+            return False
+
+        for production in self.productions.get(nonterminal, []):
+            original_index = self.index  
+            for symbol in production:
+                if symbol in self.productions:
+                    if not self.parse_nonterminal(symbol):
+                        break
+                else:
+                    if self.index >= len(self.input_string) or self.input_string[self.index] != symbol:
+                        break
+                    self.index += 1
+            else:
+                return True
+            self.index = original_index  
+        return False
+
+def main():
+    start_symbol = 'S'
+    productions = {
+        'S': [['A', 'B']],
+        'A': [['a', 'A'], ['']],
+        'B': [['b', 'B'], ['']]
+    }
+    cfg = CFG(start_symbol, productions)
+
+    input_strings = ['ab', 'aabb', 'aaaabb', 'b', 'a']
+    for input_string in input_strings:
+        if cfg.parse(input_string):
+            print(f"'{input_string}' is in the language of the CFG.")
+        else:
+            print(f"'{input_string}' is not in the language of the CFG.")
+
+if __name__ == "__main__":
+    main()

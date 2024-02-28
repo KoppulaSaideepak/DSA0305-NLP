@@ -1,0 +1,52 @@
+class PluralFSM:
+    def __init__(self):
+        self.states = {'singular', 'plural'}
+        self.start_state = 'singular'
+        self.accept_state = 'plural'
+        self.transitions = {
+            'singular': {'s': 'plural', 'x': 'plural', 'z': 'plural', 'ch': 'plural', 'sh': 'plural', 'o': 'plural', 'y': 'plural'},
+            'plural': {}
+        }
+
+    def generate_plural(self, noun):
+        current_state = self.start_state
+        plural_form = noun
+
+        if noun in ['child', 'ox', 'goose', 'tooth', 'foot', 'person']:
+            plural_form = self.irregular_plural(noun)
+            return plural_form
+
+        for i in range(len(noun) - 1, -1, -1):
+            suffix = noun[i:]
+            if suffix in self.transitions[current_state]:
+                plural_form = noun[:i] + self.transitions[current_state][suffix]
+                break
+
+        return plural_form
+
+    def irregular_plural(self, noun):
+        if noun == 'child':
+            return 'children'
+        elif noun == 'ox':
+            return 'oxen'
+        elif noun == 'goose':
+            return 'geese'
+        elif noun == 'tooth':
+            return 'teeth'
+        elif noun == 'foot':
+            return 'feet'
+        elif noun == 'person':
+            return 'people'
+        else:
+            return noun + 's'
+
+def main():
+    plural_fsm = PluralFSM()
+
+    nouns = ['cat', 'dog', 'city', 'baby', 'bus', 'fox', 'box', 'brush', 'wish', 'boy', 'day', 'toy', 'penny']
+    for noun in nouns:
+        plural = plural_fsm.generate_plural(noun)
+        print(f"{noun} -> {plural}")
+
+if __name__ == "__main__":
+    main()

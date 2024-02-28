@@ -1,0 +1,20 @@
+import nltk
+from nltk.stem import PorterStemmer
+
+def stem_words(words):
+    porter_stemmer = PorterStemmer()
+    stemmed_words = [porter_stemmer.stem(word) for word in words]
+
+    return stemmed_words
+
+def main():
+    words = ['running', 'easily', 'friendships', 'dogs', 'electricity', 'happiness', 'generously', 'connecting']
+    stemmed_words = stem_words(words)
+    for i in range(len(words)):
+        print(f"{words[i]} -> {stemmed_words[i]}")
+
+if __name__ == "__main__":
+    nltk.download('punkt')
+    nltk.download('averaged_perceptron_tagger')
+
+    main()

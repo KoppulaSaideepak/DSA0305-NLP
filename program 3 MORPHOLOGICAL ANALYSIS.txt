@@ -1,0 +1,22 @@
+import nltk
+
+def download_nltk_resources():
+    nltk.download('punkt')
+    nltk.download('averaged_perceptron_tagger')
+
+def perform_morphological_analysis(text):
+    words = nltk.word_tokenize(text)
+    for word in words:
+        print("Word:", word)
+        morphemes = nltk.word_tokenize(word)
+        for morpheme in morphemes:
+            pos_tag = nltk.pos_tag([morpheme])[0][1]
+            print("  Morpheme:", morpheme, "POS Tag:", pos_tag)
+
+def main():
+    text = "The quick brown foxes are jumping over the lazy dogs"
+    download_nltk_resources()
+    perform_morphological_analysis(text)
+
+if __name__ == "__main__":
+    main()

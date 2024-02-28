@@ -1,0 +1,17 @@
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+
+def calculate_coherence(text):
+    tokens = [word.lower() for word in word_tokenize(text) if word.isalpha()]
+    stop_words = set(stopwords.words('english'))
+    filtered_tokens = [word for word in tokens if word not in stop_words]
+    transitions = ['and', 'but', 'however', 'therefore', 'meanwhile', 'also', 'moreover', 'nevertheless']
+    transition_count = sum(1 for word in filtered_tokens if word in transitions)
+    coherence_score = transition_count / len(filtered_tokens)
+    return coherence_score
+text = """
+This is a sample text. It contains some sentences. These sentences are not very coherent. However, we can try to evaluate their coherence.
+"""
+coherence_score = calculate_coherence(text)
+print("Coherence Score:", coherence_score)

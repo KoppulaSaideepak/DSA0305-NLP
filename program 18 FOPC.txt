@@ -1,0 +1,41 @@
+import re
+
+class Predicate:
+    def __init__(self, name, args):
+        self.name = name
+        self.args = args
+
+    def __str__(self):
+        return f"{self.name}({', '.join(self.args)})"
+
+class Formula:
+    def __init__(self, predicate, negated=False):
+        self.predicate = predicate
+        self.negated = negated
+
+    def __str__(self):
+        return f"{'~' if self.negated else ''}{str(self.predicate)}"
+
+def parse_predicate(predicate_str):
+    match = re.match(r"(\w+)\((.*)\)", predicate_str)
+    if match:
+        name = match.group(1)
+        args = [arg.strip() for arg in match.group(2).split(",")]
+        return Predicate(name, args)
+    else:
+        raise ValueError(f"Invalid predicate: {predicate_str}")
+
+def parse_formula(formula_str):
+    if formula_str.startswith("~"):
+        return Formula(parse_predicate(formula_str[1:]), negated=True)
+    else:
+        return Formula(parse_predicate(formula_str))
+
+predicate_str = "likes(john, mary)"
+formula_str = "~likes(john, mary)"
+
+predicate = parse_predicate(predicate_str)
+formula = parse_formula(formula_str)
+
+print(predicate)
+print(formula)

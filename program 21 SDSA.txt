@@ -1,0 +1,37 @@
+import nltk
+nltk.download('wordnet')
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
+
+import nltk
+from nltk.corpus import wordnet
+def extract_noun_phrases(tree):
+    noun_phrases = []
+    for subtree in tree.subtrees():
+        if subtree.label() == 'NP':
+            noun_phrase = ' '.join(word for word, tag in subtree.leaves())
+            noun_phrases.append(noun_phrase)
+    return noun_phrases
+def get_word_meaning(word):
+    synsets = wordnet.synsets(word)
+    if synsets:
+        return synsets[0].definition()
+    else:
+        return "Meaning not found"
+def syntax_semantic_analysis(sentence):
+    tokens = nltk.word_tokenize(sentence)
+    tagged_tokens = nltk.pos_tag(tokens)
+    grammar = r"""
+    NP: {<DT|JJ|NN.*>+}
+    """
+    cp = nltk.RegexpParser(grammar)
+    parsed_tree = cp.parse(tagged_tokens)
+    noun_phrases = extract_noun_phrases(parsed_tree)
+    meanings = {noun_phrase: get_word_meaning(noun_phrase.split()[0]) for noun_phrase in noun_phrases}
+    return noun_phrases, meanings
+sentence = "The quick brown fox jumps over the lazy dog"
+noun_phrases, meanings = syntax_semantic_analysis(sentence)
+print("Noun Phrases:", noun_phrases)
+print("Meanings:")
+for noun_phrase in noun_phrases:
+    print(noun_phrase + ":", meanings[noun_phrase])

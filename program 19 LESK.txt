@@ -1,0 +1,18 @@
+from nltk.corpus import wordnet
+from nltk.tokenize import word_tokenize
+from nltk.wsd import lesk
+
+def lesk_algorithm(sentence, word):
+    tokenized_sentence = word_tokenize(sentence)
+    best_sense = lesk(tokenized_sentence, word)
+
+    if best_sense:
+        return best_sense.definition()
+    else:
+        return "No appropriate sense found."
+
+sentence = "I went to the bank to deposit some money."
+word = "bank"
+
+sense_definition = lesk_algorithm(sentence, word)
+print(f"The most appropriate sense of '{word}' in the given sentence is: {sense_definition}")

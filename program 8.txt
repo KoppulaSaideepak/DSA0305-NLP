@@ -1,0 +1,45 @@
+import random
+import nltk
+from nltk.tokenize import word_tokenize
+
+def train_stochastic_pos_tagger(tagged_sentences):
+    fd = nltk.FreqDist(tagged_sentences)
+
+    stochastic_tagger = {}
+    for (word, tag), freq in fd.items():
+        if word not in stochastic_tagger:
+            stochastic_tagger[word] = {}
+        stochastic_tagger[word][tag] = freq / fd.freq((word, tag))
+
+    return stochastic_tagger
+
+def stochastic_pos_tagging(text, stochastic_tagger):
+    words = word_tokenize(text)
+    tagged_words = []
+    for word in words:
+        if word in stochastic_tagger:
+            tag_probs = stochastic_tagger[word]
+            most_probable_tag = max(tag_probs, key=tag_probs.get)
+            tagged_words.append((word, most_probable_tag))
+        else:
+            tagged_words.append((word, 'NN'))  
+
+    return tagged_words
+
+def main():
+    tagged_sentences = [
+        ('The', 'DT'), ('quick', 'JJ'), ('brown', 'JJ'), ('fox', 'NN'),
+        ('jumps', 'VBZ'), ('over', 'IN'), ('the', 'DT'), ('lazy', 'JJ'), ('dog', 'NN')
+    ]
+
+    stochastic_tagger = train_stochastic_pos_tagger(tagged_sentences)
+    text = "The quick brown fox jumps over the lazy dog."
+    tagged_words = stochastic_pos_tagging(text, stochastic_tagger)
+    print("Stochastic POS Tagging:")
+    for word, tag in tagged_words:
+        print(f"{word}: {tag}")
+
+if __name__ == "__main__":
+    nltk.download('punkt')
+
+    main()

@@ -1,0 +1,56 @@
+class ParseTree:
+    def __init__(self, label, children=None):
+        self.label = label
+        self.children = children if children is not None else []
+
+    def __str__(self):
+        return self._str_helper(0)
+
+    def _str_helper(self, depth):
+        indent = ' ' * (depth * 2)
+        s = indent + str(self.label) + '\n'  
+        for child in self.children:
+            s += child._str_helper(depth + 1)
+        return s
+
+def generate_parse_tree(grammar, input_string):
+    tokens = input_string.split()
+    parse_table = [[None for _ in range(len(tokens) + 1)] for _ in range(len(tokens) + 1)]
+
+    for i in range(len(tokens)):
+        for nt, productions in grammar.items():
+            for prod in productions:
+                if prod[0] == tokens[i]:
+                    parse_table[i][i + 1] = ParseTree(nt, [ParseTree(tokens[i])])
+
+    for width in range(2, len(tokens) + 1):
+        for i in range(len(tokens) - width + 1):
+            j = i + width
+            for k in range(i + 1, j):
+                for nt, productions in grammar.items():
+                    for prod in productions:
+                        if len(prod) == 2:
+                            B, C = prod
+                            if parse_table[i][k] is not None and parse_table[k][j] is not None and parse_table[i][k].label == B and parse_table[k][j].label == C:
+                                parse_table[i][j] = ParseTree(nt, [parse_table[i][k], parse_table[k][j]])
+
+    return parse_table[0][len(tokens)]
+
+def main():
+    grammar = {
+        'S': [['NP', 'VP']],
+        'NP': [['Det', 'N'], ['NP', 'PP']],
+        'VP': [['V', 'NP'], ['VP', 'PP']],
+        'PP': [['P', 'NP']],
+        'Det': ['the', 'a'],
+        'N': ['man', 'dog', 'park', 'telescope'],
+        'V': ['saw', 'ate', 'walked'],
+        'P': ['in', 'on', 'by', 'with']
+    }
+    input_sentence = "the man saw the dog with the telescope"
+    parse_tree = generate_parse_tree(grammar, input_sentence)
+    print("Parse Tree:")
+    print(parse_tree)
+
+if __name__ == "__main__":
+    main()

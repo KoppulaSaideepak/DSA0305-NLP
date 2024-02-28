@@ -1,0 +1,36 @@
+class AgreementChecker:
+    def __init__(self, grammar):
+        self.grammar = grammar
+
+    def check_agreement(self, sentence):
+        tokens = sentence.split()
+        num_errors = 0
+
+        for i in range(len(tokens) - 1):
+            word1 = tokens[i]
+            word2 = tokens[i + 1]
+
+            if word1 in self.grammar and word2 in self.grammar[word1]:
+                agreement = self.grammar[word1][word2]
+                if agreement == 'disagree':
+                    print(f"Agreement error: '{word1}' and '{word2}' disagree.")
+                    num_errors += 1
+
+        if num_errors == 0:
+            print("No agreement errors found.")
+        else:
+            print(f"Total agreement errors found: {num_errors}")
+
+def main():
+    grammar = {
+        'Noun': {'Verb': 'agree'},
+        'Pronoun': {'Verb': 'agree'},
+        'Verb': {'Noun': 'agree', 'Pronoun': 'agree'},
+        'Det': {'Noun': 'agree'}
+    }
+    checker = AgreementChecker(grammar)
+    sentence = "the cat runs quickly"
+    checker.check_agreement(sentence)
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,36 @@
+import nltk
+from nltk.tokenize import word_tokenize, sent_tokenize
+
+def resolve_references(text):
+    sentences = sent_tokenize(text)
+    resolved_sentences = []
+    for sentence in sentences:
+        tokens = word_tokenize(sentence)
+        tagged_tokens = nltk.pos_tag(tokens)
+        resolved_tokens = []
+        antecedent = None
+        for word, tag in tagged_tokens:
+            if tag == 'PRP' or tag == 'PRP$':  
+                if word.lower() in ['he', 'him', 'his', 'she', 'her', 'it', 'they', 'them', 'their']:
+                    if antecedent:
+                        resolved_tokens.append(antecedent)
+                    else:
+                        resolved_tokens.append(word)
+            elif tag.startswith('NN'):  
+                antecedent = word
+                resolved_tokens.append(word)
+            else:
+                resolved_tokens.append(word)
+
+        resolved_sentence = ' '.join(resolved_tokens)
+        resolved_sentences.append(resolved_sentence)
+
+    resolved_text = ' '.join(resolved_sentences)
+    return resolved_text
+
+text = """
+John went to the store. He bought some groceries. The groceries were expensive.
+Mary took her dog for a walk. The dog was happy.
+"""
+resolved_text = resolve_references(text)
+print(resolved_text)

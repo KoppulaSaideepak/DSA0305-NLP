@@ -1,0 +1,16 @@
+import re
+
+def main():
+    text = """
+    Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do: once or twice she had peeped into the book her sister was reading, but it had no pictures or conversations in it, 'and what is the use of a book,' thought Alice 'without pictures or conversation?'
+    """
+    pattern = r'Alice'
+    matches = re.findall(pattern, text)
+    print("Matches found:", matches)
+    pattern2 = r'\bt\w+'
+    matches2 = re.findall(pattern2, text)
+    print("Words starting with 't':", matches2)
+    modified_text = re.sub(pattern, 'Bob', text)
+    print("Modified text:\n", modified_text)
+if __name__ == "__main__":
+    main()

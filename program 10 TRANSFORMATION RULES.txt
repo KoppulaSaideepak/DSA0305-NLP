@@ -1,0 +1,25 @@
+def transform_based_pos_tagging(words):
+    tagged_words = []
+
+    for word in words:
+        if word.endswith('ing'):
+            tagged_words.append((word, 'VBG'))  
+        elif word.endswith('ed'):
+            tagged_words.append((word, 'VBD'))  
+        elif word.endswith('s'):
+            tagged_words.append((word, 'NNS'))  
+        else:
+            tagged_words.append((word, 'NN'))   
+
+    return tagged_words
+
+def main():
+    words = ['playing', 'worked', 'dogs', 'cat']
+    tagged_words = transform_based_pos_tagging(words)
+
+    print("Transformation-based POS Tagging:")
+    for word, tag in tagged_words:
+        print(f"{word}: {tag}")
+
+if __name__ == "__main__":
+    main()

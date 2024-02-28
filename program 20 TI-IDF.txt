@@ -1,0 +1,50 @@
+from collections import Counter
+import math
+
+class TFIDF:
+    def __init__(self, documents):
+        self.documents = documents
+        self.term_freq = self.calculate_term_frequency()
+        self.inverse_doc_freq = self.calculate_inverse_document_frequency()
+
+    def calculate_term_frequency(self):
+        term_freq = {}
+        for doc_id, doc in enumerate(self.documents):
+            term_freq[doc_id] = Counter(doc)
+        return term_freq
+
+    def calculate_inverse_document_frequency(self):
+        inverse_doc_freq = {}
+        num_documents = len(self.documents)
+        for term in set(term for doc in self.documents for term in doc):
+            num_docs_with_term = sum(1 for doc in self.documents if term in doc)
+            inverse_doc_freq[term] = math.log(num_documents / (1 + num_docs_with_term)) + 1
+        return inverse_doc_freq
+
+    def calculate_tf_idf(self, query):
+        query_terms = query.split()
+        query_vector = Counter(query_terms)
+        query_vector_norm = math.sqrt(sum(count**2 for count in query_vector.values()))
+        scores = {}
+        for doc_id, doc in enumerate(self.documents):
+            score = 0
+            for term in query_terms:
+                if term in doc:
+                    tf = self.term_freq[doc_id][term]
+                    idf = self.inverse_doc_freq.get(term, 0)  
+                    score += (tf / len(doc)) * idf * query_vector[term] / query_vector_norm
+            scores[doc_id] = score
+        return scores
+
+documents = [
+    "apple orange orange banana",
+    "apple banana banana",
+    "orange orange orange",
+    "banana banana banana banana"
+]
+
+tfidf = TFIDF(documents)
+query = "apple banana"
+scores = tfidf.calculate_tf_idf(query)
+ranked_documents = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+print("Ranked Documents:", ranked_documents)

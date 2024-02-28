@@ -1,0 +1,21 @@
+import nltk
+from nltk.tokenize import word_tokenize
+
+def pos_tagging(text):
+    words = word_tokenize(text)
+    tagged_words = nltk.pos_tag(words)
+    return tagged_words
+
+def main():
+    text = "NLTK is a leading platform for building Python programs to work with human language data."
+    tagged_words = pos_tagging(text)
+
+    print("POS Tagging:")
+    for word, tag in tagged_words:
+        print(f"{word}: {tag}")
+
+if __name__ == "__main__":
+    nltk.download('punkt')
+    nltk.download('averaged_perceptron_tagger')
+    
+    main()

@@ -1,0 +1,58 @@
+class EarleyParser:
+    def __init__(self, grammar):
+        self.grammar = grammar
+
+    def parse(self, input_string):
+        chart = [[] for _ in range(len(input_string) + 1)]
+        chart[0].append(('S\'', ['S'], 0))
+
+        for i in range(len(input_string) + 1):
+            while True:
+                updated = False
+                for entry in chart[i]:
+                    nonterminal, production, position = entry
+                    if position < len(production) and production[position] in self.grammar:
+                        for rule in self.grammar[production[position]]:
+                            if (production[position], rule, i) not in chart[i]:
+                                chart[i].append((production[position], rule, i))
+                                updated = True
+                    elif position == len(production):
+                        for prev_entry in chart[entry[2]]:
+                            prev_nonterminal, prev_production, prev_position = prev_entry
+                            if prev_position < len(prev_production) and prev_production[prev_position] == nonterminal:
+                                new_entry = (prev_nonterminal, prev_production[:prev_position] + [nonterminal] + prev_production[prev_position+1:], prev_position+1)
+                                if new_entry not in chart[i]:
+                                    chart[i].append(new_entry)
+                                    updated = True
+                if not updated:
+                    break
+
+        return ('S', ['S'], len(input_string)) in chart[len(input_string)]
+
+def main():
+    grammar = {
+        'S': [['NP', 'VP']],
+        'NP': [['Det', 'N'], ['NP', 'PP']],
+        'VP': [['V', 'NP'], ['VP', 'PP']],
+        'PP': [['P', 'NP']],
+        'Det': ['the', 'a'],
+        'N': ['man', 'dog', 'park', 'telescope'],
+        'V': ['saw', 'ate', 'walked'],
+        'P': ['in', 'on', 'by', 'with']
+    }
+
+    parser = EarleyParser(grammar)
+
+    input_strings = [
+        "the man saw the dog",
+        "the man with the telescope walked",
+        "the dog ate the bone"
+    ]
+    for input_string in input_strings:
+        if parser.parse(input_string.split()):
+            print(f"'{input_string}' is in the language of the grammar.")
+        else:
+            print(f"'{input_string}' is not in the language of the grammar.")
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,32 @@
+import nltk
+nltk.download('nps_chat')
+from nltk.corpus import nps_chat
+
+posts = nltk.corpus.nps_chat.xml_posts()
+def extract_features(post):
+    features = {}
+    for word in nltk.word_tokenize(post):
+        features['contains({})'.format(word.lower())] = True
+    return features
+dialog_act_featuresets = [(extract_features(post.text), post.get('class')) for post in posts]
+classifier = nltk.NaiveBayesClassifier.train(dialog_act_featuresets)
+def recognize_dialog_acts(conversation):
+    dialog_acts = []
+    for utterance in conversation:
+        features = extract_features(utterance)
+        dialog_act = classifier.classify(features)
+        dialog_acts.append((utterance, dialog_act))
+    return dialog_acts
+conversation = [
+    "Hi, how are you?",
+    "I'm doing well, thank you!",
+    "Do you want to go out for dinner tonight?",
+    "Sure, I'd love to!",
+    "Great, let's meet at 7 PM."
+]
+
+recognized_acts = recognize_dialog_acts(conversation)
+for utterance, act in recognized_acts:
+    print("Utterance:", utterance)
+    print("Dialog Act:", act)
+    print()

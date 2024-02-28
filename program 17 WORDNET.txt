@@ -1,0 +1,22 @@
+import nltk
+nltk.download('wordnet')
+from nltk.corpus import wordnet
+
+def get_synsets(word):
+    synsets = wordnet.synsets(word)
+    return synsets
+
+def explore_meanings(word):
+    synsets = get_synsets(word)
+    if not synsets:
+        print(f"No synsets found for '{word}'")
+        return
+    
+    print(f"Synsets for '{word}':")
+    for synset in synsets:
+        print(f" - {synset.name()}: {synset.definition()}")
+        print(f"   Examples: {synset.examples()}")
+        print()
+words = ["dog", "run", "happy"]
+for word in words:
+    explore_meanings(word)

@@ -1,0 +1,30 @@
+import re
+
+def rule_based_pos_tagging(text):
+    tagged_words = []
+    words = text.split()
+
+    for word in words:
+        if re.match(r'\b[A-Z][a-z]*\b', word):
+            tagged_words.append((word, 'NNP'))  
+        elif re.match(r'\b[A-Za-z]+\b', word):
+            tagged_words.append((word, 'NN'))   
+        elif re.match(r'\b\d+\b', word):
+            tagged_words.append((word, 'CD'))   
+        elif re.match(r'\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\b', word, re.IGNORECASE):
+            tagged_words.append((word, 'NNP'))  
+        else:
+            tagged_words.append((word, 'NN'))   
+
+    return tagged_words
+
+def main():
+    text = "John Smith is from New York. He was born in July 1990."
+    tagged_words = rule_based_pos_tagging(text)
+
+    print("Rule-based POS Tagging:")
+    for word, tag in tagged_words:
+        print(f"{word}: {tag}")
+
+if __name__ == "__main__":
+    main()
